@@ -8,7 +8,7 @@
  */
 void safe_string_input(char buf[MAX_STR], const char *prompt)
 {
-    printf("%s? ", prompt);
+    printf("%s", prompt);
     fflush(stdout);
     fgets(buf, MAX_STR, stdin);
     buf[strlen(buf)-1] = '\0';
@@ -36,7 +36,7 @@ void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max,
     int ret = 0;
     int input = 0;
     do {
-        printf("%s? ", prompt);
+        printf("%s", prompt);
         fflush(stdout);
 
         fgets(buf, MAX_STR, stdin);
