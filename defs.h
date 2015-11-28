@@ -1,7 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+#include <limits.h>
+
 #define MAX_STR 32
 #define NUM_LETTERS 26
 #define C_OK 1
 #define C_NOK 0
+
+enum gamestate
+{
+    CONNECTING,
+    SETUP,
+    TURN,
+    WAITING_FOR_TURN,
+    WIN,
+    LOSE
+};
 
 /*  Structures  */
 typedef struct
