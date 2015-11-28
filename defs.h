@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
+#include <signals.h>
 
 #define MAX_STR 32
 #define NUM_LETTERS 26
