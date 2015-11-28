@@ -1,10 +1,13 @@
+#include "defs.h"
+
 /*
  * Function: safe_string_input
  * Purpose: Performs standard string input fodder: read a string (without newline) from the console with a prompt.
  * out: The buffer to read the input into.
  * in: the prompt to use.
  */
-void safe_string_input(char buf[MAX_STR], const char *prompt) {
+void safe_string_input(char buf[MAX_STR], const char *prompt)
+{
     printf("%s? ", prompt);
     fflush(stdout);
     fgets(buf, MAX_STR, stdin);
@@ -21,7 +24,8 @@ void safe_string_input(char buf[MAX_STR], const char *prompt) {
  * in: the maximum value the integer input should take on (-1 if no max)
  * out: the integer pointer to store the validated integer in.
  */
-void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max, int *into) {
+void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max, int *into)
+{
     if (min == -1) {
         min = INT_MIN;
     }
