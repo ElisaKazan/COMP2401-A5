@@ -50,7 +50,7 @@ int getWordGuess(Game *g)
     } while(checkWordGuess(g, guess) != C_OK);
 
     //Check if the word is correct
-    if (strcmp(guess, them_word) == 0)
+    if (strcmp(guess, g->them_word) == 0)
     {
         //They guessed correctly
         return C_OK;
@@ -95,7 +95,7 @@ int checkWordGuess(Game *g, char *guess)
     int i = 0;
     while(guess[i] != '\0')
     {
-        if (!isalpha(guess[i]) || guess[i] != " ")
+        if (!isalpha(guess[i]) || guess[i] != ' ')
         {
             return C_NOK;
         }

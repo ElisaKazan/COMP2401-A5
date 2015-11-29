@@ -39,6 +39,9 @@ int getWordGuess(Game *g);
 int checkLetterGuess(Game *g, char *guess);
 int checkWordGuess(Game *g, char *guess);
 
+/*  Jack I dunno where this goes :)  */
+void turn(Game g);
+
 /* User input utility functions */
 void safe_string_input(char buf[MAX_STR], const char *prompt);
 void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max, int *into);
