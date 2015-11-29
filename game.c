@@ -41,7 +41,25 @@ int getLetterGuess(Game *g)
 
 int getWordGuess(Game *g)
 {
+    char guess[MAX_STR];
 
+    //Get the players letter guess (keep asking until it is acceptable)
+    do
+    {
+        safe_string_input(guess,"What is the word you wish to guess?");
+    } while(checkWordGuess(g, guess) != C_OK);
+
+    //Check if the word is correct
+    if (strcmp(guess, them_word) == 0)
+    {
+        //They guessed correctly
+        return C_OK;
+    }
+    else
+    {
+        //Their guess is incorrect 
+        return C_NOK;
+    }
 }
 
 int checkLetterGuess(Game *g, char *guess)
@@ -57,6 +75,7 @@ int checkLetterGuess(Game *g, char *guess)
     {
         return C_NOK;
     }
+
     //Check if guess has already been guessed
     int i;
     for(i = 0; i < NUM_LETTERS + 1; i++)
@@ -72,4 +91,14 @@ int checkLetterGuess(Game *g, char *guess)
 
 int checkWordGuess(Game *g, char *guess)
 {
+    //Check if the string contains special characters or numbers
+    int i = 0;
+    while(guess[i] != '\0')
+    {
+        if (!isalpha(guess[i]) || guess[i] != " ")
+        {
+            return C_NOK;
+        }
+        i++;
+    }
 }
