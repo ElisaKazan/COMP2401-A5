@@ -34,8 +34,8 @@ typedef struct
 /* Game functions */
 int getLetterGuess(Game *g);
 int getWordGuess(Game *g);
-int checkLetterGuess(Game *g, char guess[]);
-int checkWordGuess(Game *g, char guess[]);
+int checkLetterGuess(Game *g, char *guess);
+int checkWordGuess(Game *g, char *guess);
 
 /* User input utility functions */
 void safe_string_input(char buf[MAX_STR], const char *prompt);
