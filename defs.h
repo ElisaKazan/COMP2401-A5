@@ -9,6 +9,8 @@
 #define C_OK 1
 #define C_NOK 0
 
+extern int socket;
+
 enum gamestate
 {
     CONNECTING,
@@ -40,3 +42,16 @@ int checkWordGuess(Game *g, char *guess);
 /* User input utility functions */
 void safe_string_input(char buf[MAX_STR], const char *prompt);
 void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max, int *into);
+
+/* Networking */
+// Make a server socket and bind to a port (2401)
+void activate_socket_server();
+// Connect to the server at `address` and stick it in the global socket.
+void connect_client(char *address);
+// Sends the string in Game g to the server and sets up the other side's
+// string in the Game.
+void do_setup(Game *g);
+// Send networking update for end of turn
+void end_turn(Game *g);
+// Wait for next turn
+void wait_turn(Game *g);

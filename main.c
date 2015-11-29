@@ -1,4 +1,6 @@
 #include "defs.h"
+// Our communication socket with the client.
+int socket;
 
 void handle_sigint(int signal_code);
 
