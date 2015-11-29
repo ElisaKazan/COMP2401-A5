@@ -9,7 +9,7 @@ int main(int argc, char **argv)
     // Set up a signal handler
     signal(SIGINT, handle_sigint);
 
-    printf("Testing program!");
+    printf("Testing program!\n");
 
     safe_string_input(game.us_word, "What is our word?");
     safe_string_input(game.them_word, "What is their word?");
