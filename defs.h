@@ -9,7 +9,7 @@
 #define C_OK 1
 #define C_NOK 0
 
-extern int socket;
+extern int game_socket;
 
 enum gamestate
 {
