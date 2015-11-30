@@ -104,7 +104,7 @@ void display_game_status(Game *g)
     ///Opponents Status
     printf("Opponent:\n\n");
 
-    int i = 0;
+    i = 0;
     while(g->them_solution[i] != '\0')
     {
         printf("%c ", g->them_solution[i]);
