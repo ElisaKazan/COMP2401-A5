@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
     printf("Testing program!\n");
 
-    char buffer[MAX_STR];
+    safe_string_input();
 
     game.state = TURN;
     strcpy(game.us_word, "Hello");
@@ -28,10 +28,11 @@ int main(int argc, char **argv)
     strcpy(game.us_solution, "_____");
     strcpy(game.them_solution, "_____");
 
-    get_letter_guess(&game, buffer);
-
-    safe_string_input(game.us_word, "What is our word?");
-    safe_string_input(game.them_word, "What is their word?");
+    while (game.state != WIN && game.state != LOSE) 
+    {
+        display_game_status(&game);
+        turn(&game);
+    }
 }
 
 void handle_sigint(int signal_name)
@@ -109,6 +110,7 @@ void display_game_status(Game *g)
     while(g->us_solution[i] != '\0')
     {
         printf("%c ", g->us_solution[i]);
+        i++;
     }
 
     //Line
@@ -121,6 +123,7 @@ void display_game_status(Game *g)
     while(g->them_solution[i] != '\0')
     {
         printf("%c ", g->them_solution[i]);
+        i++;
     }
     //Line
     printf("\n__________________________________________________________________\n");

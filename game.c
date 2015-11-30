@@ -6,12 +6,12 @@ int get_letter_guess(Game *g, char *letter_buffer)
     do
     {
         safe_string_input(letter_buffer,"What is the letter you wish to guess?");
-    } while(check_word_guess(g, letter_buffer) != C_OK);
+    } while(check_letter_guess(g, letter_buffer) != C_OK);
 
     char guess = letter_buffer[0];
 
     //Check if letter is in the word
-    int i;
+    int i = 0;
     int num_correct = 0;
     while (g->them_word[i] != '\0')
     {
@@ -60,16 +60,16 @@ int get_word_guess(Game *g, char *word_buffer)
 int check_letter_guess(Game *g, char *guess)
 {
     //Check if it's not a character
-    if (strlen(guess) != 2)
+    if (strlen(guess) != 1)
     {
-        printf("not a char");
+        printf("That is not a single character\n");
         return C_NOK;
     }
     
     //Check if the input is invalid
-    if (!isalpha(guess))
+    if (!isalpha(guess[0]))
     {
-        printf("not alphabet");
+        printf("That letter is not alphabetical\n");
         return C_NOK;
     }
 
@@ -79,11 +79,10 @@ int check_letter_guess(Game *g, char *guess)
     {
         if (g->us_incorrect[i] == guess[0])
         {
-            printf("already guessed");
+            printf("That was already guessed\n");
             return C_NOK;
         }
     }
-    printf("should work fine");
     return C_OK;
 }
 
@@ -93,10 +92,12 @@ int check_word_guess(Game *g, char *guess)
     int i = 0;
     while(guess[i] != '\0')
     {
-        if (!isalpha(guess[i]) || guess[i] != ' ')
+        if (!isalpha(guess[i]) || guess[i] == ' ')
         {
             return C_NOK;
         }
         i++;
     }
+
+    return C_OK;
 }
