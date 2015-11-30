@@ -50,6 +50,8 @@ void activate_socket_server() {
         printf("Couldn't accept connection!\n");
         exit(1);
     }
+
+    close(game_socket);
 }
 
 void end_turn(Game *g, char *buffer) {
