@@ -40,6 +40,14 @@ void handle_sigint(int signal_name)
     printf("\"You can check out any time you like, but you can never leave.\"\n");
 }
 
+/*
+ * Function: turn
+ * Purpose: This function plays one turn in the game. First the player
+ * chooses between guessing a word or a letter (1 or 2). Then they
+ * submit their guess. If they are correct they win the game and the
+ * state changes, otherwise the state changes to WAITING_FOR_TURN
+ * in: game struct 
+ */
 void turn(Game *g)
 {
     int selection;
@@ -91,11 +99,15 @@ void turn(Game *g)
             g->state = WAITING_FOR_TURN;
         }
     }
-
     //Networking
     end_turn(g, buffer);
 }
 
+/*
+ * Function: display_game_status
+ * Purpose: Prints the game status (player and opponents solutions)
+ * in: game struct
+ */
 void display_game_status(Game *g)
 {
     //Prints the game status
@@ -130,6 +142,13 @@ void display_game_status(Game *g)
 
 }
 
+/*
+ * Function: display_message_turn
+ * Purpose: Prints the players guess (correct or incorrect)
+ * in: game struct
+ * in: players guess (letter or word)
+ * in: correct boolean (0 or 1)
+ */
 void display_message_turn(Game *g, char *guess, int correct)
 {
     //You guessed correctly
@@ -144,6 +163,14 @@ void display_message_turn(Game *g, char *guess, int correct)
     }
 }
 
+/*
+ * Function: display_message_waiting
+ * Purpose: Prints the opponenets guess while you are waiting for 
+ * their turn to be over
+ * in: game struct
+ * in: players guess ( letter or word)
+ * in: correct boolean (0 or 1)
+ */
 void display_message_waiting(Game *g, char *guess, int correct)
 {
     //They guessed correctly
@@ -158,6 +185,11 @@ void display_message_waiting(Game *g, char *guess, int correct)
     }
 }
 
+/*
+ * Function: display_message_winner
+ * Purpose: Prints winner message 
+ * in: game struct
+ */
 void display_message_winner(Game *g)
 {
     //Winner

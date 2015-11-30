@@ -1,5 +1,13 @@
 #include "defs.h"
 
+/*
+ * Function: get_letter_guess
+ * Purpose: Asks the player for a letter (keeps asking until it's acceptable), 
+ * checks if the letter is in the word. If the guess was correct, returns C_OK 
+ * else adds letter to incorrect array and returns C_NOK
+ * in: game struct (has the solution, incorrect array and word) 
+ * out: letter guess
+ */
 int get_letter_guess(Game *g, char *letter_buffer)
 {
     //Get the players letter guess (keep asking until it is acceptable)
@@ -32,10 +40,19 @@ int get_letter_guess(Game *g, char *letter_buffer)
     }
     else
     {
+        //Add to incorrect array
+        strcat(g->us_incorrect, guess);
         return C_NOK;
     }
 }
 
+/*
+ * Function: get_word_guess
+ * Purpose: Asks player for a word guess (continues asking until it is acceptable). 
+ * Checks if the word is correct and returns C_OK otherwise returns C_NOK 
+ * in: game struct 
+ * out: word that player guessed
+ */
 int get_word_guess(Game *g, char *word_buffer)
 {
     //Get the players letter guess (keep asking until it is acceptable)
@@ -57,6 +74,14 @@ int get_word_guess(Game *g, char *word_buffer)
     }
 }
 
+/*
+ * Function: check_letter_guess
+ * Purpose: Checks if the letter guess is acceptable (i.e. It's a character
+ * that is in the alphabet (not a special character) and it has not been 
+ * guessed already
+ * in: game struct 
+ * in: letter guess
+ */
 int check_letter_guess(Game *g, char *guess)
 {
     //Check if it's not a character
@@ -86,6 +111,14 @@ int check_letter_guess(Game *g, char *guess)
     return C_OK;
 }
 
+/*
+ * Function: check_word_guess
+ * Purpose: Checks if the string is valid (does not contain any special 
+ * characters or numbers) and returns C_OK if it's valid and C_NOK if
+ * it's invalid (note: spaces are okay)
+ * in: game struct
+ * in: word guess
+ */
 int check_word_guess(Game *g, char *guess)
 {
     //Check if the string contains special characters or numbers
