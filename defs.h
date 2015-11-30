@@ -40,7 +40,11 @@ int checkLetterGuess(Game *g, char *guess);
 int checkWordGuess(Game *g, char *guess);
 
 /*  Jack I dunno where this goes :)  */
-void turn(Game g);
+void turn(Game *g);
+void display_game_status(Game *g);
+void display_message_turn(Game *g, char *guess, int correct);
+void display_message_waiting(Game *g, char *guess, int correct);
+void display_message_winner(Game *g);
 
 /* User input utility functions */
 void safe_string_input(char buf[MAX_STR], const char *prompt);
