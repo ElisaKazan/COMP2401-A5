@@ -4,15 +4,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define PORT_NUMBER 2041
+#define PORT_NUMBER 2401
 
 void activate_socket_server() {
     // Socket for binding on and return codes of various
     // socket functions
     int server_socket, ret;
     struct sockaddr_in addr;
-    // The buffer we write into from the network
-    char buffer[MAX_STR];
 
     // Create the socket so that we can listen - note that this
     // isn't where communication will happen, just where we
@@ -43,7 +41,7 @@ void activate_socket_server() {
         exit(1);
     }
 
-    int addr_size = sizeof(addr);
+    size_t addr_size = sizeof(addr);
 
     game_socket = accept(server_socket, 
                          (struct sockaddr *) &addr,
@@ -52,4 +50,8 @@ void activate_socket_server() {
         printf("Couldn't accept connection!\n");
         exit(1);
     }
+}
+
+void end_turn(Game *g, char *buffer) {
+
 }
