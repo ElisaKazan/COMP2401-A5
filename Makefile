@@ -1,11 +1,13 @@
+CFLAGS=-Wall -std=c99 -g
+
 Assignment5: main.o util.o game.o network.o
-	gcc -o $@ $?
+	gcc -o $@ main.o util.o game.o network.o
 
 main.o: main.c defs.h
-	gcc -c main.c
+	gcc ${CFLAGS} -c main.c
 util.o: util.c defs.h
-	gcc -c util.c
+	gcc ${CFLAGS} -c util.c
 game.o: game.c defs.h
-	gcc -c game.c
+	gcc ${CFLAGS} -c game.c
 network.o: network.c defs.h
-	gcc -c network.c
+	gcc ${CFLAGS} -c network.c

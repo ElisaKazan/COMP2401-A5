@@ -1,4 +1,5 @@
 #include "defs.h"
+
 // Our communication socket with the client.
 int game_socket;
 
@@ -16,6 +17,18 @@ int main(int argc, char **argv)
     signal(SIGINT, handle_sigint);
 
     printf("Testing program!\n");
+
+    char buffer[MAX_STR];
+
+    game.state = TURN;
+    strcpy(game.us_word, "Hello");
+    strcpy(game.them_word, "Happy");
+    strcpy(game.us_incorrect, "");
+    strcpy(game.them_incorrect, "");
+    strcpy(game.us_solution, "_____");
+    strcpy(game.them_solution, "_____");
+
+    get_letter_guess(&game, buffer);
 
     safe_string_input(game.us_word, "What is our word?");
     safe_string_input(game.them_word, "What is their word?");
@@ -37,10 +50,10 @@ void turn(Game *g)
     if (selection == 1)
     {
         //Letter
-        if (getLetterGuess(g) == C_OK)
+        if (get_letter_guess(g, buffer) == C_OK)
         {
             //Guessed letter is in the word
-         
+
             //Check if the word is complete
             if (strcmp(g->them_solution, g->them_word) == 0)
             {
@@ -50,21 +63,21 @@ void turn(Game *g)
             }
             else
             {
-                //display_message_turn(g, ___, C_OK);
+                display_message_turn(g, buffer, C_OK);
                 g->state = WAITING_FOR_TURN;
             }
         }
         else
         {
             //Guessed letter is not in the word
-            //display_message_turn(g,___, C_NOK);
+            display_message_turn(g, buffer, C_NOK);
             g->state = WAITING_FOR_TURN;
         }
     }
     else if (selection == 2)
     {
         //Word
-        if (getWordGuess(g) == C_OK)
+        if (get_word_guess(g, buffer) == C_OK)
         {
             //WINNER (guessed word is correct)
             display_message_winner(g);
@@ -73,13 +86,13 @@ void turn(Game *g)
         else
         {
             //Guessed word is not correct
-            //display_message_turn(g, ____, C_NOK);
+            display_message_turn(g, buffer, C_NOK);
             g->state = WAITING_FOR_TURN;
         }
     }
 
     //Networking
-    end_turn(g);
+    end_turn(g, buffer);
 }
 
 void display_game_status(Game *g)
@@ -149,17 +162,3 @@ void display_message_winner(Game *g)
     //Play again?
     //safe_string_input("Would you like to:\n\t(1) Play Again\n\t(2) Quit\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

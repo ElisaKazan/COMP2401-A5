@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <signal.h>
+#include <ctype.h>
 
 #define MAX_STR 32
 #define NUM_LETTERS 26
@@ -34,12 +35,10 @@ typedef struct
 } Game;
 
 /* Game functions */
-int getLetterGuess(Game *g);
-int getWordGuess(Game *g);
-int checkLetterGuess(Game *g, char *guess);
-int checkWordGuess(Game *g, char *guess);
-
-/*  Jack I dunno where this goes :)  */
+int get_letter_guess(Game *g, char *letter_buffer);
+int get_word_guess(Game *g, char *word_buffer);
+int check_letter_guess(Game *g, char *guess);
+int check_word_guess(Game *g, char *guess);
 void turn(Game *g);
 void display_game_status(Game *g);
 void display_message_turn(Game *g, char *guess, int correct);
@@ -59,6 +58,6 @@ void connect_client(char *address);
 // string in the Game.
 void do_setup(Game *g);
 // Send networking update for end of turn
-void end_turn(Game *g);
+void end_turn(Game *g, char *buffer);
 // Wait for next turn
 void wait_turn(Game *g);
