@@ -18,8 +18,6 @@ int main(int argc, char **argv)
 
     printf("Testing program!\n");
 
-    safe_string_input();
-
     game.state = TURN;
     strcpy(game.us_word, "Hello");
     strcpy(game.them_word, "Happy");
