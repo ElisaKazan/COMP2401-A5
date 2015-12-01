@@ -9,6 +9,8 @@ int main(int argc, char **argv)
 {
     Game game;
 
+    activate_socket_server();
+
 
     printf("____ or _ _ _ _\n");
     printf("h _ p p y   d _ y _");
