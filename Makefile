@@ -11,3 +11,8 @@ game.o: game.c defs.h
 	gcc ${CFLAGS} -c game.c
 network.o: network.c defs.h
 	gcc ${CFLAGS} -c network.c
+
+.PHONY: clean
+
+clean:
+	rm *.o Assignment5

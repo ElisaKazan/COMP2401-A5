@@ -51,9 +51,28 @@ void activate_socket_server() {
         printf("Couldn't accept connection!\n");
         exit(1);
     }
-
-    close(game_socket);
 }
 
 void end_turn(Game *g, char *buffer) {
+    send(game_socket, buffer, strlen(buffer)+1, 0);
+    send(game_socket, &(g->state), sizeof(g->state), 0);
+    send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
+    send(game_socket, &(g->us_solution), sizeof(g->us_incorrect), 0);
+
+    char buffer_recv[MAX_STR];
+    enum gamestate other_state;
+
+    recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
+    recv(game_socket, &other_state, sizeof(enum gamestate), 0);
+    recv(game_socket, &(g->them_incorrect), sizeof(g->them_incorrect), 0);
+    recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
+
+    display_message_waiting(g, buffer_recv, other_state == WIN);
+
+    if (other_state == WIN) {
+        g->state = LOSE;
+    }
+    else {
+        g->state = TURN;
+    }
 }

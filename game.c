@@ -40,8 +40,9 @@ int get_letter_guess(Game *g, char *letter_buffer)
     }
     else
     {
-        //Add to incorrect array
-        strcat(g->us_incorrect, guess);
+        size_t num_incorrect = strlen(g->us_incorrect);
+        g->us_incorrect[num_incorrect] = guess;
+        g->us_incorrect[num_incorrect + 1] = '\0';
         return C_NOK;
     }
 }
