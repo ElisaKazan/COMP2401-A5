@@ -15,8 +15,6 @@ extern int game_socket;
 
 enum gamestate
 {
-    CONNECTING,
-    SETUP,
     TURN,
     WAITING_FOR_TURN,
     WIN,
@@ -33,6 +31,8 @@ typedef struct
     char them_incorrect[NUM_LETTERS + 1];
     char us_solution[MAX_STR];
     char them_solution[MAX_STR];
+    // 1 if we're the server, 0 if we're the client.
+    char server;
 } Game;
 
 /* Game functions */
@@ -61,3 +61,5 @@ void connect_client(char *address);
 void do_network_setup(Game *g);
 // Send networking update for end of turn
 void end_turn(Game *g, char *buffer);
+// Wait for the other side to finish their turn
+void wait_for_turn(Game *g);

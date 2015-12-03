@@ -307,7 +307,10 @@ void fill_underscores_except_spaces(char *from, char *to) {
             // A 'blank'
             to[i] = '_';
         }
+        i++;
     }
+
+    to[i] = 0;
 }
 
 void do_setup(Game *g)

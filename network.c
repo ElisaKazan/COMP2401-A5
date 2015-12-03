@@ -62,12 +62,8 @@ void activate_socket_server() {
     }
 }
 
-void end_turn(Game *g, char *buffer) {
-    send(game_socket, buffer, strlen(buffer)+1, 0);
-    send(game_socket, &(g->state), sizeof(g->state), 0);
-    send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
-    send(game_socket, &(g->us_solution), sizeof(g->us_incorrect), 0);
-
+void wait_for_turn(Game *g) {
+    printf("Waiting for opponent's turn!\n");
     char buffer_recv[MAX_STR];
     enum gamestate other_state;
 
@@ -84,6 +80,15 @@ void end_turn(Game *g, char *buffer) {
     else {
         g->state = TURN;
     }
+}
+
+void end_turn(Game *g, char *buffer) {
+    send(game_socket, buffer, strlen(buffer)+1, 0);
+    send(game_socket, &(g->state), sizeof(g->state), 0);
+    send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
+    send(game_socket, &(g->us_solution), sizeof(g->us_incorrect), 0);
+
+    wait_for_turn(g);
 }
 
 // Connect to the server at `address` and stick it in the global socket.

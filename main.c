@@ -9,13 +9,16 @@ int main(int argc, char **argv)
 {
     Game game;
 
+    // 1 if there's no arguments, 0 if there are.
+    game.server = (argc == 1);
+
     if (argc == 1)
     {
         activate_socket_server();
     }
     else if (argc == 2)
     {
-        connect_client(argv[0]);
+        connect_client(argv[1]);
     }
     else
     {
@@ -29,13 +32,30 @@ int main(int argc, char **argv)
 
     do_setup(&game);
 
-    game.state = TURN;
+    // If we're the client, we go first!
+    if (!game.server)
+    {
+        game.state = TURN;
+    }
+    // Otherwise, we have to let the 
+    // other player go.
+    else
+    {
+        game.state = WAITING_FOR_TURN;
+    }
 
 
     while (game.state != WIN && game.state != LOSE) 
     {
         display_game_status(&game);
-        turn(&game);
+        if (game.state == WAITING_FOR_TURN) 
+        {
+            wait_for_turn(&game);
+        }
+        else if (game.state == TURN) 
+        {
+            turn(&game);
+        }
     }
 
     // Winning/losing logic
