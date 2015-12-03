@@ -4,8 +4,17 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define PORT_NUMBER 2401
+
+// Sends the string in Game g to the server and sets up the other side's
+// string in the Game.
+void do_network_setup(Game *g) 
+{
+    send(game_socket, g->us_word, sizeof(g->us_word), 0);
+    recv(game_socket, g->them_word, sizeof(g->them_word), 0);
+}
 
 void activate_socket_server() {
     // Socket for binding on and return codes of various
@@ -74,5 +83,33 @@ void end_turn(Game *g, char *buffer) {
     }
     else {
         g->state = TURN;
+    }
+}
+
+// Connect to the server at `address` and stick it in the global socket.
+void connect_client(char *address)
+{
+    struct sockaddr_in addr;
+    int ret_code;
+
+    game_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (game_socket < 0)
+    {
+        printf("Couldn't create socket. :-(\n");
+        exit(1);
+    }
+
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr(address);
+    addr.sin_port = htons((unsigned short)PORT_NUMBER);
+
+    ret_code = connect(game_socket,
+                       (struct sockaddr *) &addr,
+                       sizeof(addr));
+    if (ret_code < 0)
+    {
+        printf("Couldn't connect to server! :(\n");
+        exit(1);
     }
 }

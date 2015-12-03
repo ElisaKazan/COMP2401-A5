@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 #include <signal.h>
 #include <ctype.h>
@@ -38,12 +39,13 @@ typedef struct
 int get_letter_guess(Game *g, char *letter_buffer);
 int get_word_guess(Game *g, char *word_buffer);
 int check_letter_guess(Game *g, char *guess);
-int check_word_guess(Game *g, char *guess);
+int check_word_input(char *guess);
 void turn(Game *g);
 void display_game_status(Game *g);
 void display_message_turn(Game *g, char *guess, int correct);
 void display_message_waiting(Game *g, char *guess, int correct);
 void display_message_winner(Game *g);
+void do_setup(Game *g);
 
 /* User input utility functions */
 void safe_string_input(char buf[MAX_STR], const char *prompt);
@@ -56,8 +58,6 @@ void activate_socket_server();
 void connect_client(char *address);
 // Sends the string in Game g to the server and sets up the other side's
 // string in the Game.
-void do_setup(Game *g);
+void do_network_setup(Game *g);
 // Send networking update for end of turn
 void end_turn(Game *g, char *buffer);
-// Wait for next turn
-void wait_turn(Game *g);

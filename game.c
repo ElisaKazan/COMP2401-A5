@@ -60,7 +60,7 @@ int get_word_guess(Game *g, char *word_buffer)
     do
     {
         safe_string_input(word_buffer,"What is the word you wish to guess?");
-    } while(check_word_guess(g, word_buffer) != C_OK);
+    } while(check_word_input(word_buffer) == C_OK);
 
     //Check if the word is correct
     if (strcmp(word_buffer, g->them_word) == 0)
@@ -113,20 +113,19 @@ int check_letter_guess(Game *g, char *guess)
 }
 
 /*
- * Function: check_word_guess
+ * Function: check_word_input
  * Purpose: Checks if the string is valid (does not contain any special 
  * characters or numbers) and returns C_OK if it's valid and C_NOK if
  * it's invalid (note: spaces are okay)
- * in: game struct
  * in: word guess
  */
-int check_word_guess(Game *g, char *guess)
+int check_word_input(char *guess)
 {
     //Check if the string contains special characters or numbers
     int i = 0;
     while(guess[i] != '\0')
     {
-        if (!isalpha(guess[i]) || guess[i] == ' ')
+        if (!isalpha(guess[i]) && guess[i] != ' ')
         {
             return C_NOK;
         }
@@ -134,4 +133,195 @@ int check_word_guess(Game *g, char *guess)
     }
 
     return C_OK;
+}
+
+/*
+ * Function: turn
+ * Purpose: This function plays one turn in the game. First the player
+ * chooses between guessing a word or a letter (1 or 2). Then they
+ * submit their guess. If they are correct they win the game and the
+ * state changes, otherwise the state changes to WAITING_FOR_TURN
+ * in: game struct 
+ */
+void turn(Game *g)
+{
+    int selection;
+    char buffer[MAX_STR];
+
+    //Will player guess a letter or word?
+    safe_integer_input(buffer, "What would you like to guess?\n\t(1) a letter\n\t(2) a word\n", 1, 2, &selection);
+
+    if (selection == 1)
+    {
+        //Letter
+        if (get_letter_guess(g, buffer) == C_OK)
+        {
+            //Guessed letter is in the word
+
+            //Check if the word is complete
+            if (strcmp(g->them_solution, g->them_word) == 0)
+            {
+                //WINNER (completed the word)
+                display_message_winner(g);
+                g->state = WIN;
+            }
+            else
+            {
+                display_message_turn(g, buffer, C_OK);
+                g->state = WAITING_FOR_TURN;
+            }
+        }
+        else
+        {
+            //Guessed letter is not in the word
+            display_message_turn(g, buffer, C_NOK);
+            g->state = WAITING_FOR_TURN;
+        }
+    }
+    else if (selection == 2)
+    {
+        //Word
+        if (get_word_guess(g, buffer) == C_OK)
+        {
+            //WINNER (guessed word is correct)
+            display_message_winner(g);
+            g->state = WIN;
+        }
+        else
+        {
+            //Guessed word is not correct
+            display_message_turn(g, buffer, C_NOK);
+            g->state = WAITING_FOR_TURN;
+        }
+    }
+    //Networking
+    end_turn(g, buffer);
+}
+
+/*
+ * Function: display_game_status
+ * Purpose: Prints the game status (player and opponents solutions)
+ * in: game struct
+ */
+void display_game_status(Game *g)
+{
+    //Prints the game status
+
+    //Line
+    printf("__________________________________________________________________\n");
+
+    //Your status
+    printf("You:\n\n");
+    
+    int i = 0;
+    while(g->us_solution[i] != '\0')
+    {
+        printf("%c ", g->us_solution[i]);
+        i++;
+    }
+
+    //Line
+    printf("\n__________________________________________________________________\n");
+
+    ///Opponents Status
+    printf("Opponent:\n\n");
+
+    i = 0;
+    while(g->them_solution[i] != '\0')
+    {
+        printf("%c ", g->them_solution[i]);
+        i++;
+    }
+    //Line
+    printf("\n__________________________________________________________________\n");
+
+}
+
+/*
+ * Function: display_message_turn
+ * Purpose: Prints the players guess (correct or incorrect)
+ * in: game struct
+ * in: players guess (letter or word)
+ * in: correct boolean (0 or 1)
+ */
+void display_message_turn(Game *g, char *guess, int correct)
+{
+    //You guessed correctly
+    if (correct)
+    {
+        printf("Correct! You guessed '%s'\n", guess);
+    }
+    //You guessed incorrectly
+    else
+    {
+        printf("Incorrect! You guessed '%s'\n", guess);
+    }
+}
+
+/*
+ * Function: display_message_waiting
+ * Purpose: Prints the opponenets guess while you are waiting for 
+ * their turn to be over
+ * in: game struct
+ * in: players guess ( letter or word)
+ * in: correct boolean (0 or 1)
+ */
+void display_message_waiting(Game *g, char *guess, int correct)
+{
+    //They guessed correctly
+    if (correct)
+    {
+        printf("Correct! Opponent guessed '%s'\n", guess);
+    }
+    //They guessed incorrectly
+    else
+    {
+        printf("Incorrect! Opponent guessed '%s'\n", guess);
+    }
+}
+
+/*
+ * Function: display_message_winner
+ * Purpose: Prints winner message 
+ * in: game struct
+ */
+void display_message_winner(Game *g)
+{
+    //Winner
+    printf("WINNER!!!\n\n");
+    //Play again?
+    //safe_string_input("Would you like to:\n\t(1) Play Again\n\t(2) Quit\n");
+}
+
+void fill_underscores_except_spaces(char *from, char *to) {
+    int soln_len = strlen(from);
+    int i = 0;
+    while (i < soln_len)
+    {
+        if (from[i] == ' ')
+        {
+            to[i] = ' ';
+        }
+        else
+        {
+            // A 'blank'
+            to[i] = '_';
+        }
+    }
+}
+
+void do_setup(Game *g)
+{
+    // Ask the user for the word
+    do {
+        safe_string_input(g->us_word, "What is the word you want your opponent to guess?");
+    } while (check_word_input(g->us_word) == C_NOK);
+
+    do_network_setup(g);
+
+    fill_underscores_except_spaces(g->them_word, g->us_solution);
+    fill_underscores_except_spaces(g->us_word, g->them_solution);
+
+    g->us_incorrect[0] = 0;
+    g->them_incorrect[0] = 0;
 }
