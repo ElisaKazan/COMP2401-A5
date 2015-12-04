@@ -2,22 +2,6 @@
 
 #define PORT_NUMBER 60003
 
-// recv, but retrying after interrupt.
-/*
- * Function: hardened_recv
- * Purpose: This function attempts to stop recv from being interrupted by a
- *          ctrl-C, as returning to a system call after a signal gives a
- *          EINTR.
- * in: All the parameters of recv. See man page.
- */
-void hardened_recv(int sockfd, void *buf, size_t len, int flags)
-{
-    do
-    {
-        recv(sockfd, buf, len, flags);
-    } while (errno != EINTR);
-}
-
 /*
  * Function: do_network_setup
  * Purpose: Does the setup for a connection with the other side (spooky!).
@@ -28,7 +12,7 @@ void hardened_recv(int sockfd, void *buf, size_t len, int flags)
 void do_network_setup(Game *g) 
 {
     send(game_socket, g->us_word, sizeof(g->us_word), 0);
-    hardened_recv(game_socket, g->them_word, sizeof(g->them_word), 0);
+    recv(game_socket, g->them_word, sizeof(g->them_word), 0);
 }
 
 /*
@@ -109,10 +93,10 @@ void wait_for_turn(Game *g)
     enum gamestate other_state;
     int correct;
 
-    hardened_recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
-    hardened_recv(game_socket, &other_state, sizeof(enum gamestate), 0);
-    hardened_recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
-    hardened_recv(game_socket, &correct, sizeof(correct), 0);
+    recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
+    recv(game_socket, &other_state, sizeof(enum gamestate), 0);
+    recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
+    recv(game_socket, &correct, sizeof(correct), 0);
 
     display_message_waiting(g, buffer_recv, correct);
 
@@ -202,6 +186,6 @@ void send_replay(int replay)
 int wait_replay()
 {
     int replay;
-    hardened_recv(game_socket, &replay, sizeof(int), 0);
+    recv(game_socket, &replay, sizeof(int), 0);
     return replay;
 }

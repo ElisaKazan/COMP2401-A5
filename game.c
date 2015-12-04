@@ -278,7 +278,7 @@ void display_message_waiting(Game *g, char *guess, int correct)
 void display_message_winner(Game *g)
 {
     //Winner
-    printf("WINNER!!!\n\n");
+    printf("WINNER!!! The opponent's word was %s\n", g->us_word);
 }
 
 

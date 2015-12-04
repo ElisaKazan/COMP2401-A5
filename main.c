@@ -73,7 +73,6 @@ static int do_game(Game *game, int *server_socket)
         game->state = WAITING_FOR_TURN;
     }
 
-
     while (game->state != WIN && game->state != LOSE) 
     {
         display_game_status(game);
@@ -89,10 +88,10 @@ static int do_game(Game *game, int *server_socket)
 
     if (game->state == WIN)
     {
-        // See if the user wants to play again
-        safe_string_input(str, "You won! Do you want to play again (Y/n)?");
         while (1)
         {
+            // See if the user wants to play again
+            safe_string_input(str, "You won! Do you want to play again (Y/n)?");
             if (str[0] == 'Y' || str[0] == 'y')
             {
                 printf("Like my iPod stuck on replay, replay...\n");
@@ -111,6 +110,7 @@ static int do_game(Game *game, int *server_socket)
     }
     else
     {
+        printf("You lost. The opponents word was %s\n", game->them_word);
         printf("You lost... Waiting for the response of your opponent.\n");
         int replay = wait_replay();
         if (replay)
