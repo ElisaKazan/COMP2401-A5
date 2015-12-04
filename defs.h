@@ -5,6 +5,11 @@
 #include <limits.h>
 #include <signal.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define MAX_STR 32
 #define NUM_LETTERS 26
