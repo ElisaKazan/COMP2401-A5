@@ -27,8 +27,8 @@ typedef struct
     enum gamestate state;
     char us_word[MAX_STR];
     char them_word[MAX_STR];
-    char us_incorrect[NUM_LETTERS + 1];
-    char them_incorrect[NUM_LETTERS + 1];
+    //char us_incorrect[NUM_LETTERS + 1];
+    //char them_incorrect[NUM_LETTERS + 1];
     char us_solution[MAX_STR];
     char them_solution[MAX_STR];
     // 1 if we're the server, 0 if we're the client.
