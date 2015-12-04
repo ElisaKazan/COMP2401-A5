@@ -2,14 +2,44 @@
 
 #define PORT_NUMBER 60003
 
-// Sends the string in Game g to the server and sets up the other side's
-// string in the Game.
+// recv, but retrying after interrupt.
+/*
+ * Function: hardened_recv
+ * Purpose: This function attempts to stop recv from being interrupted by a
+ *          ctrl-C, as returning to a system call after a signal gives a
+ *          EINTR.
+ * in: All the parameters of recv. See man page.
+ */
+void hardened_recv(int sockfd, void *buf, size_t len, int flags)
+{
+    do
+    {
+        recv(sockfd, buf, len, flags);
+    } while (errno != EINTR);
+}
+
+/*
+ * Function: do_network_setup
+ * Purpose: Does the setup for a connection with the other side (spooky!).
+ *          This involves sending our word across the socket then receiving
+ *          back the other side's word.
+ * in/out: the game structure to operate on. Must have us_word populated.
+ */
 void do_network_setup(Game *g) 
 {
     send(game_socket, g->us_word, sizeof(g->us_word), 0);
-    recv(game_socket, g->them_word, sizeof(g->them_word), 0);
+    hardened_recv(game_socket, g->them_word, sizeof(g->them_word), 0);
 }
 
+/*
+ * Function: activate_socket_server
+ * Purpose: Checks the value of *server_socket. If it is -1, creates a server
+ *          socket and stores its fd in *server_socket. Then listens on either
+ *          the newly created socket or on the one already in *server_socket.
+ * in/out: a place to store the server socket when it is created, or a pointer
+ *         containing the fd of the server socket (-1 value indicates no socket
+ *         has been created yet).
+ */
 void activate_socket_server(int *server_socket)
 {
     // Socket for binding on and return codes of various
@@ -66,17 +96,25 @@ void activate_socket_server(int *server_socket)
     }
 }
 
-void wait_for_turn(Game *g) {
+/*
+ * Function: wait_for_turn
+ * Purpose: Waits for a turn to finish by receiving updates about the other
+ *          side's turn.
+ * in/out: the game structure to operate on. Must be fully initialized.
+ */
+void wait_for_turn(Game *g)
+{
     printf("Waiting for opponent's turn!\n");
     char buffer_recv[MAX_STR];
     enum gamestate other_state;
+    int correct;
 
-    recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
-    recv(game_socket, &other_state, sizeof(enum gamestate), 0);
-    //recv(game_socket, &(g->them_incorrect), sizeof(g->them_incorrect), 0);
-    recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
+    hardened_recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
+    hardened_recv(game_socket, &other_state, sizeof(enum gamestate), 0);
+    hardened_recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
+    hardened_recv(game_socket, &correct, sizeof(correct), 0);
 
-    display_message_waiting(g, buffer_recv, other_state == WIN);
+    display_message_waiting(g, buffer_recv, correct);
 
     if (other_state == WIN) 
     {
@@ -88,18 +126,33 @@ void wait_for_turn(Game *g) {
     }
 }
 
-void end_turn(Game *g, char *buffer, int correct) {
-    send(game_socket, buffer, strlen(buffer)+1, 0);
+/*
+ * Function: end_turn
+ * Purpose: Sends the updates for this turn, checks if we won, and if we didn't,
+ *          calls wait_for_turn to wait for our next turn.
+ * in/out: the game structure to operate on. Must be fully initialized.
+ * in: The buffer containing the user's guess
+ * in: If the guess above was correct or not.
+ */
+void end_turn(Game *g, char *buffer, int correct)
+{
+    send(game_socket, buffer, MAX_STR, 0);
     send(game_socket, &(g->state), sizeof(g->state), 0);
-    //send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
     send(game_socket, &(g->us_solution), sizeof(g->us_solution), 0);
+    send(game_socket, &correct, sizeof(correct), 0);
 
-    if (g->state != WIN) {
+    if (g->state != WIN)
+    {
         wait_for_turn(g);
     }
 }
 
-// Connect to the server at `address` and stick it in the global socket.
+/*
+ * Function: connect_client
+ * Purpose: Creates a client socket and stores it in the global variable
+ *          game_socket. Uses the address `address`
+ * in/out: the address of the server.
+ */
 void connect_client(char *address)
 {
     struct sockaddr_in addr;
@@ -127,12 +180,28 @@ void connect_client(char *address)
     }
 }
 
-void send_replay(int replay) {
+/*
+ * Function: send_replay
+ * Purpose: Send an integer across the wire which indicates if the winner
+ *          wishes to continue playing the game.
+ * in: the integer to send. 1 for "I want to replay", 0 for "I want to quit"
+ */
+void send_replay(int replay)
+{
     send(game_socket, &replay, sizeof(int), 0);
 }
 
-int wait_replay() {
+/*
+ * Function: wait_replay
+ * Purpose: Waits for a reply from the server about if it wants to replay the
+ *          game. If it's a 1, the winner wants to continue. If it's a 0,
+ *          the winner wants to quit, and the loser should go into server
+ *          mode and wait for a new person to come along.
+ * out: the value from the other side.
+ */
+int wait_replay()
+{
     int replay;
-    recv(game_socket, &replay, sizeof(int), 0);
+    hardened_recv(game_socket, &replay, sizeof(int), 0);
     return replay;
 }

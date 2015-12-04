@@ -6,12 +6,16 @@ int game_socket;
 void handle_sigint(int signal_code);
 static int do_game(Game *game, int *server_socket);
 
+// The main function.
 int main(int argc, char **argv)
 {
     Game game;
     // Start the server socket off as a number it can't be 
     // if it is initialized.
     int server_socket = -1;
+
+    // Set up a signal handler
+    signal(SIGINT, handle_sigint);
 
     // 1 if there's no arguments, 0 if there are.
     game.server = (argc == 1);
@@ -32,22 +36,28 @@ int main(int argc, char **argv)
 
     int end_game = C_NOK;
 
-    while (end_game == C_NOK) {
+    while (end_game == C_NOK)
+    {
         end_game = do_game(&game, &server_socket);
     }
 
-    if (server_socket != -1) {
+    if (server_socket != -1)
+    {
         close(server_socket);
     }
 }
 
+/*
+ * Function: do_game
+ * Purpose: Performs the main game logic for the main loop.
+ * in/out: the Game structure. Doesn't need to be initialized.
+ * in/out: the space for keeping the server socket. Used for when we
+ *         want to become the server.
+ * return: C_OK if the game should terminate, C_NOK if not.
+ */
 static int do_game(Game *game, int *server_socket)
 {
     char str[MAX_STR];
-
-    // Set up a signal handler
-    signal(SIGINT, handle_sigint);
-
 
     do_setup(game);
 
@@ -101,12 +111,14 @@ static int do_game(Game *game, int *server_socket)
     }
     else
     {
-        printf("You lost...\n");
+        printf("You lost... Waiting for the response of your opponent.\n");
         int replay = wait_replay();
-        if (replay) {
+        if (replay)
+        {
             printf("Winner wants to replay. Let's go again!\n");
         }
-        else {
+        else
+        {
             printf("The winner was satisfied with your defeat... Time to wait for another player.\n");
             game->server = 1;
             // Listen for another client
@@ -118,8 +130,16 @@ static int do_game(Game *game, int *server_socket)
     return C_NOK;
 }
 
-void handle_sigint(int signal_name)
+/*
+ * Function: handle_sigint
+ * Purpose: Handles a interrupt signal (printing out a message), then puts
+ *          itself back in as a signal handler (this seems to be a necessary
+ *          step). This is to block Ctrl-C.
+ * in: the number of the signal that fired (we only register SIGINT)
+ */
+void handle_sigint(int signal_number)
 {
-    printf("\"You can check out any time you like, but you can never leave.\"\n");
+    printf("\n\"You can check out any time you like, but you can never leave.\"\n");
+    signal(SIGINT, handle_sigint);
 }
 

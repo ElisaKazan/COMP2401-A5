@@ -40,11 +40,6 @@ int get_letter_guess(Game *g, char *letter_buffer)
     }
     else
     {
-        //Add element to incorrect array
-        //size_t num_incorrect = strlen(g->us_incorrect);
-        //printf("num_incorrect = %d, g->us_incorrect[%d] = %c", num_incorrect, num_incorrect, guess);
-        //g->us_incorrect[num_incorrect] = guess;
-        //g->us_incorrect[num_incorrect + 1] = '\0';
         return C_NOK;
     }
 }
@@ -101,18 +96,6 @@ int check_letter_guess(Game *g, char *guess)
         return C_NOK;
     }
 
-    //Check if guess has already been guessed - DELETED SO SAD NEVER WILL I RECOVER
-    /*
-    int i;
-    for(i = 0; i < NUM_LETTERS + 1; i++)
-    {
-        if (g->us_incorrect[i] == guess[0])
-        {
-            printf("That was already guessed\n");
-            return C_NOK;
-        }
-    }
-    */
     return C_OK;
 }
 
@@ -165,7 +148,7 @@ void turn(Game *g)
             correct = C_OK;
 
             //Check if the word is complete
-            if (strcmp(g->them_solution, g->them_word) == 0)
+            if (strcmp(g->us_solution, g->them_word) == 0)
             {
                 //WINNER (completed the word)
                 display_message_winner(g);
@@ -215,8 +198,6 @@ void turn(Game *g)
 void display_game_status(Game *g)
 {
     //Prints the game status
-
-    //Line
     printf("__________________________________________________________________\n");
 
     //Your status
@@ -241,7 +222,6 @@ void display_game_status(Game *g)
         printf("%c ", g->them_solution[i]);
         i++;
     }
-    //Line
     printf("\n__________________________________________________________________\n");
 
 }
@@ -299,11 +279,18 @@ void display_message_winner(Game *g)
 {
     //Winner
     printf("WINNER!!!\n\n");
-    //Play again?
-    //safe_string_input("Would you like to:\n\t(1) Play Again\n\t(2) Quit\n");
 }
 
-void fill_underscores_except_spaces(char *from, char *to) {
+
+/*
+ * Function: fill_underscores_except_spaces
+ * Purpose: Fills buffer "to" with underscores except when it encounters a
+ *          space in which case it fills the "to" buffer location with a space.
+ * in: A buffer to read from
+ * out: A buffer to write underscores to except spaces
+ */
+void fill_underscores_except_spaces(const char *from, char *to)
+{
     int soln_len = strlen(from);
     int i = 0;
     while (i < soln_len)
@@ -323,10 +310,18 @@ void fill_underscores_except_spaces(char *from, char *to) {
     to[i] = 0;
 }
 
+/*
+ * Function: do_setup
+ * Purpose: Does setup tasks: ask the user for their word, check that input,
+ *          gets the other word from the network, and fills in solutions.
+ * in/out: the Game to modify and read from (we read the word from it after
+           writing it in, so it's technically an output and input parameter)
+ */
 void do_setup(Game *g)
 {
     // Ask the user for the word
-    do {
+    do
+    {
         safe_string_input(g->us_word, "What is the word you want your opponent to guess?");
     } while (check_word_input(g->us_word) == C_NOK);
 
@@ -334,7 +329,4 @@ void do_setup(Game *g)
 
     fill_underscores_except_spaces(g->them_word, g->us_solution);
     fill_underscores_except_spaces(g->us_word, g->them_solution);
-
-    //g->us_incorrect[0] = 0;
-    //g->them_incorrect[0] = 0;
 }

@@ -8,10 +8,13 @@
  */
 void safe_string_input(char buf[MAX_STR], const char *prompt)
 {
-    printf("%s ", prompt);
-    fflush(stdout);
-    fgets(buf, MAX_STR, stdin);
-    buf[strlen(buf)-1] = '\0';
+    do
+    {
+        printf("%s ", prompt);
+        fflush(stdout);
+        fgets(buf, MAX_STR, stdin);
+        buf[strlen(buf)-1] = '\0';
+    } while (!buf[0]);
 }
 
 /*
@@ -26,16 +29,19 @@ void safe_string_input(char buf[MAX_STR], const char *prompt)
  */
 void safe_integer_input(char buf[MAX_STR], const char *prompt, int min, int max, int *into)
 {
-    if (min == -1) {
+    if (min == -1)
+    {
         min = INT_MIN;
     }
-    if (max == -1) {
+    if (max == -1)
+    {
         max = INT_MAX;
     }
 
     int ret = 0;
     int input = 0;
-    do {
+    do
+    {
         printf("%s ", prompt);
         fflush(stdout);
 
