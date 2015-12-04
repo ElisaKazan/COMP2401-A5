@@ -60,7 +60,7 @@ int get_word_guess(Game *g, char *word_buffer)
     do
     {
         safe_string_input(word_buffer,"What is the word you wish to guess?");
-    } while(check_word_input(word_buffer) == C_OK);
+    } while(check_word_input(word_buffer) == C_NOK);
 
     //Check if the word is correct
     if (strcmp(word_buffer, g->them_word) == 0)
@@ -256,6 +256,7 @@ void display_message_turn(Game *g, char *guess, int correct)
     {
         printf("Incorrect! You guessed '%s'\n", guess);
     }
+    display_game_status(g);
 }
 
 /*
