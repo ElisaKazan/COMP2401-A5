@@ -56,7 +56,7 @@ void activate_socket_server(int *server_socket)
                    sizeof(addr));
         if (ret < 0) 
         {
-            printf("Bind failed :-(\n");
+            printf("Bind failed :-( This tends to happen if you start the server right after killing it forcefully. Please be nicer to our server and try again :).\n");
             exit(1);
         }
     }
