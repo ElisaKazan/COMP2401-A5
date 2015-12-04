@@ -94,7 +94,7 @@ void wait_for_turn(Game *g) {
     }
 }
 
-void end_turn(Game *g, char *buffer) {
+void end_turn(Game *g, char *buffer, int correct) {
     send(game_socket, buffer, strlen(buffer)+1, 0);
     send(game_socket, &(g->state), sizeof(g->state), 0);
     send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
