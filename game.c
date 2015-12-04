@@ -40,9 +40,11 @@ int get_letter_guess(Game *g, char *letter_buffer)
     }
     else
     {
-        size_t num_incorrect = strlen(g->us_incorrect);
-        g->us_incorrect[num_incorrect] = guess;
-        g->us_incorrect[num_incorrect + 1] = '\0';
+        //Add element to incorrect array
+        //size_t num_incorrect = strlen(g->us_incorrect);
+        //printf("num_incorrect = %d, g->us_incorrect[%d] = %c", num_incorrect, num_incorrect, guess);
+        //g->us_incorrect[num_incorrect] = guess;
+        //g->us_incorrect[num_incorrect + 1] = '\0';
         return C_NOK;
     }
 }
@@ -99,7 +101,8 @@ int check_letter_guess(Game *g, char *guess)
         return C_NOK;
     }
 
-    //Check if guess has already been guessed
+    //Check if guess has already been guessed - DELETED SO SAD NEVER WILL I RECOVER
+    /*
     int i;
     for(i = 0; i < NUM_LETTERS + 1; i++)
     {
@@ -109,6 +112,7 @@ int check_letter_guess(Game *g, char *guess)
             return C_NOK;
         }
     }
+    */
     return C_OK;
 }
 
@@ -331,6 +335,6 @@ void do_setup(Game *g)
     fill_underscores_except_spaces(g->them_word, g->us_solution);
     fill_underscores_except_spaces(g->us_word, g->them_solution);
 
-    g->us_incorrect[0] = 0;
-    g->them_incorrect[0] = 0;
+    //g->us_incorrect[0] = 0;
+    //g->them_incorrect[0] = 0;
 }

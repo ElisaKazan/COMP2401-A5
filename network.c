@@ -73,7 +73,7 @@ void wait_for_turn(Game *g) {
 
     recv(game_socket, buffer_recv, sizeof(buffer_recv), 0);
     recv(game_socket, &other_state, sizeof(enum gamestate), 0);
-    recv(game_socket, &(g->them_incorrect), sizeof(g->them_incorrect), 0);
+    //recv(game_socket, &(g->them_incorrect), sizeof(g->them_incorrect), 0);
     recv(game_socket, &(g->them_solution), sizeof(g->them_solution), 0);
 
     display_message_waiting(g, buffer_recv, other_state == WIN);
@@ -91,7 +91,7 @@ void wait_for_turn(Game *g) {
 void end_turn(Game *g, char *buffer, int correct) {
     send(game_socket, buffer, strlen(buffer)+1, 0);
     send(game_socket, &(g->state), sizeof(g->state), 0);
-    send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
+    //send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
     send(game_socket, &(g->us_solution), sizeof(g->us_solution), 0);
 
     if (g->state != WIN) {
