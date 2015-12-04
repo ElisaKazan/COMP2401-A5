@@ -60,6 +60,6 @@ void connect_client(char *address);
 // string in the Game.
 void do_network_setup(Game *g);
 // Send networking update for end of turn
-void end_turn(Game *g, char *buffer);
+void end_turn(Game *g, char *buffer, int correct);
 // Wait for the other side to finish their turn
 void wait_for_turn(Game *g);

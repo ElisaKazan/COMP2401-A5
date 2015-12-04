@@ -147,6 +147,7 @@ void turn(Game *g)
 {
     int selection;
     char buffer[MAX_STR];
+    int correct = -1;
 
     //Will player guess a letter or word?
     safe_integer_input(buffer, "What would you like to guess?\n\t(1) a letter\n\t(2) a word\n", 1, 2, &selection);
@@ -157,6 +158,7 @@ void turn(Game *g)
         if (get_letter_guess(g, buffer) == C_OK)
         {
             //Guessed letter is in the word
+            correct = C_OK;
 
             //Check if the word is complete
             if (strcmp(g->them_solution, g->them_word) == 0)
@@ -173,6 +175,7 @@ void turn(Game *g)
         }
         else
         {
+            correct = C_NOK;
             //Guessed letter is not in the word
             display_message_turn(g, buffer, C_NOK);
             g->state = WAITING_FOR_TURN;
@@ -184,18 +187,20 @@ void turn(Game *g)
         if (get_word_guess(g, buffer) == C_OK)
         {
             //WINNER (guessed word is correct)
+            correct = C_OK;
             display_message_winner(g);
             g->state = WIN;
         }
         else
         {
             //Guessed word is not correct
+            correct = C_NOK;
             display_message_turn(g, buffer, C_NOK);
             g->state = WAITING_FOR_TURN;
         }
     }
     //Networking
-    end_turn(g, buffer);
+    end_turn(g, buffer, correct);
 }
 
 /*
@@ -272,12 +277,12 @@ void display_message_waiting(Game *g, char *guess, int correct)
     //They guessed correctly
     if (correct)
     {
-        printf("Correct! Opponent guessed '%s'\n", guess);
+        printf("Opponent guessed '%s' which is correct\n", guess);
     }
     //They guessed incorrectly
     else
     {
-        printf("Incorrect! Opponent guessed '%s'\n", guess);
+        printf("Opponent guessed '%s' which is incorrect\n", guess);
     }
 }
 

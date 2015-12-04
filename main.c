@@ -12,7 +12,6 @@ int main(int argc, char **argv)
     // 1 if there's no arguments, 0 if there are.
     game.server = (argc == 1);
 
-    printf("Waiting to connect...");
     if (argc == 1)
     {
         activate_socket_server();

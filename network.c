@@ -22,6 +22,8 @@ void activate_socket_server() {
     int server_socket, ret;
     struct sockaddr_in addr;
 
+    printf("Waiting to connect...\n");
+
     // Create the socket so that we can listen - note that this
     // isn't where communication will happen, just where we
     // we listen for clients.
