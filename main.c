@@ -8,13 +8,16 @@ void handle_sigint(int signal_code);
 int main(int argc, char **argv)
 {
     Game game;
+    // Start the server socket off as a number it can't be 
+    // if it is initialized.
+    int server_socket = -1;
 
     // 1 if there's no arguments, 0 if there are.
     game.server = (argc == 1);
 
     if (argc == 1)
     {
-        activate_socket_server();
+        activate_socket_server(&server_socket);
     }
     else if (argc == 2)
     {

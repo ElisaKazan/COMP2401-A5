@@ -16,47 +16,55 @@ void do_network_setup(Game *g)
     recv(game_socket, g->them_word, sizeof(g->them_word), 0);
 }
 
-void activate_socket_server() {
+void activate_socket_server(int *server_socket)
+{
     // Socket for binding on and return codes of various
     // socket functions
-    int server_socket, ret;
+    int ret;
     struct sockaddr_in addr;
 
-    // Create the socket so that we can listen - note that this
-    // isn't where communication will happen, just where we
-    // we listen for clients.
-    server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (*server_socket == -1)
+    {
+        // Create the socket so that we can listen - note that this
+        // isn't where communication will happen, just where we
+        // we listen for clients.
+        *server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    if (server_socket < 0) {
-        printf("Couldn't open socket.\n");
-        exit(1);
+        if (*server_socket < 0) 
+        {
+            printf("Couldn't open socket.\n");
+            exit(1);
+        }
+
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = htonl(INADDR_ANY);
+        addr.sin_port = htons((unsigned short) PORT_NUMBER);
+
+        ret = bind(*server_socket,
+                   (struct sockaddr *) &addr,
+                   sizeof(addr));
+        if (ret < 0) 
+        {
+            printf("Bind failed :-(\n");
+            exit(1);
+        }
     }
 
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons((unsigned short) PORT_NUMBER);
-
-    ret = bind(server_socket,
-               (struct sockaddr *) &addr,
-               sizeof(addr));
-    if (ret < 0) {
-        printf("Bind failed :-(\n");
-        exit(1);
-    }
-
-    ret = listen(server_socket, 5);
-    if (ret < 0) {
+    ret = listen(*server_socket, 5);
+    if (ret < 0) 
+    {
         printf("Couldn't listen! :-(\n");
         exit(1);
     }
 
     size_t addr_size = sizeof(addr);
 
-    game_socket = accept(server_socket, 
+    game_socket = accept(*server_socket, 
                          (struct sockaddr *) &addr,
                          &addr_size);
-    if (game_socket < 0) {
+    if (game_socket < 0) 
+    {
         printf("Couldn't accept connection!\n");
         exit(1);
     }
@@ -74,10 +82,12 @@ void wait_for_turn(Game *g) {
 
     display_message_waiting(g, buffer_recv, other_state == WIN);
 
-    if (other_state == WIN) {
+    if (other_state == WIN) 
+    {
         g->state = LOSE;
     }
-    else {
+    else 
+    {
         g->state = TURN;
     }
 }
