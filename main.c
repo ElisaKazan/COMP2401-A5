@@ -8,10 +8,11 @@ void handle_sigint(int signal_code);
 int main(int argc, char **argv)
 {
     Game game;
-
+    
     // 1 if there's no arguments, 0 if there are.
     game.server = (argc == 1);
 
+    printf("Waiting to connect...");
     if (argc == 1)
     {
         activate_socket_server();

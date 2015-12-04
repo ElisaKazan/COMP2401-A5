@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT_NUMBER 2401
+#define PORT_NUMBER 60003
 
 // Sends the string in Game g to the server and sets up the other side's
 // string in the Game.
