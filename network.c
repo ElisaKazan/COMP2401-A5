@@ -94,7 +94,9 @@ void end_turn(Game *g, char *buffer, int correct) {
     send(game_socket, &(g->us_incorrect), sizeof(g->us_incorrect), 0);
     send(game_socket, &(g->us_solution), sizeof(g->us_solution), 0);
 
-    wait_for_turn(g);
+    if (g->state != WIN) {
+        wait_for_turn(g);
+    }
 }
 
 // Connect to the server at `address` and stick it in the global socket.
@@ -123,4 +125,14 @@ void connect_client(char *address)
         printf("Couldn't connect to server! :(\n");
         exit(1);
     }
+}
+
+void send_replay(int replay) {
+    send(game_socket, &replay, sizeof(int), 0);
+}
+
+int wait_replay() {
+    int replay;
+    recv(game_socket, &replay, sizeof(int), 0);
+    return replay;
 }

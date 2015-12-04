@@ -4,7 +4,7 @@
 int game_socket;
 
 void handle_sigint(int signal_code);
-static int do_game(Game *game);
+static int do_game(Game *game, int *server_socket);
 
 int main(int argc, char **argv)
 {
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     int end_game = C_NOK;
 
     while (end_game == C_NOK) {
-        end_game = do_game(&game);
+        end_game = do_game(&game, &server_socket);
     }
 
     if (server_socket != -1) {
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     }
 }
 
-static int do_game(Game *game)
+static int do_game(Game *game, int *server_socket)
 {
     char str[MAX_STR];
 
@@ -81,23 +81,41 @@ static int do_game(Game *game)
     {
         // See if the user wants to play again
         safe_string_input(str, "You won! Do you want to play again (Y/n)?");
-        if (str[0] != 'Y' || str[0] != 'y')
+        while (1)
         {
-            printf("Like my iPod stuck on replay, replay...\n");
-        }
-        else if (str[0] != 'N' || str[0] != 'n')
-        {
-            printf("Bye!\n");
-            close(game_socket);
-            return C_NOK;
+            if (str[0] == 'Y' || str[0] == 'y')
+            {
+                printf("Like my iPod stuck on replay, replay...\n");
+                send_replay(1);
+                break;
+            }
+            else if (str[0] == 'N' || str[0] == 'n')
+            {
+                printf("Bye!\n");
+                send_replay(0);
+                close(game_socket);
+                // Terminate the game
+                return C_OK;
+            }
         }
     }
     else
     {
         printf("You lost...\n");
+        int replay = wait_replay();
+        if (replay) {
+            printf("Winner wants to replay. Let's go again!\n");
+        }
+        else {
+            printf("The winner was satisfied with your defeat... Time to wait for another player.\n");
+            game->server = 1;
+            // Listen for another client
+            activate_socket_server(server_socket);
+        }
     }
 
-    return C_OK;
+    // The game continues
+    return C_NOK;
 }
 
 void handle_sigint(int signal_name)

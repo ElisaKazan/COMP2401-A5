@@ -68,3 +68,5 @@ void do_network_setup(Game *g);
 void end_turn(Game *g, char *buffer, int correct);
 // Wait for the other side to finish their turn
 void wait_for_turn(Game *g);
+// Sends a replay packet
+void send_replay(int replay);
